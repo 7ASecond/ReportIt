@@ -1,0 +1,12 @@
+﻿Update History
+
+Changes By Dave Gordon : 19th December 2015
+3.02.11     Changed the Removed Image (r500) to new version incorporating our new agreed logo.
+            Changed ProcessLink so that the link length (number of Characters) remain the same as the  original
+Changes By Dave Gordon : 19th December 2015
+3.02.12     GenerateNewLink() did not function correctly with long links. Attempted Fix 1.
+            Change GenerateNewLink now called GenerateNewLinkText()
+            Added Pad function found on Stackoverflow - but lost the link!
+Changes By Dave Gordon : 19th December 2015
+3.02.13     GenerateNewLinkText() is still not working. Reverting back to fixed text length for just now.
+                         
