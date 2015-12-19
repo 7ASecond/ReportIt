@@ -1,12 +1,29 @@
-﻿Update History
+﻿********************************************************************************************************************************************
+********************************************************************************************************************************************
+This Add-On is a beta demonstration of how Report-It!, the Report-It API, and the Damocles Database can make the internet safer and free of a great deal of criminal content; especially content relating to the sexual abuse, exploitation, trafficking and rape of children. The main purpose of this demonstration is to show major browser vendors that they should and indeed must incorporate the API and functionality of the add-on into the core of their browser offerings.
+********************************************************************************************************************************************
+********************************************************************************************************************************************
+
+TODO:
+    1)      Send All Image Src urls to API to receive in return all which src urls from list that should be hidden (already Reported)
+    2)      Send All Link urls to API to see which should be hidden
+    3)      Send all Text to API for editing
+    4)      Send Page Url to API for blocking if necessary
+    5)      Perhaps quicker to send the entire page to API to receive an edited version back? 1 - 4 has to be done before the page is rendered!
+
+    ******************************************************************************************************************************************  ******************************************************************************************************************************************
+Update History
 
 Changes By Dave Gordon : 19th December 2015
 3.02.11     Changed the Removed Image (r500) to new version incorporating our new agreed logo.
             Changed ProcessLink so that the link length (number of Characters) remain the same as the  original
+******************************************************************************************************************************************
 Changes By Dave Gordon : 19th December 2015
 3.02.12     GenerateNewLink() did not function correctly with long links. Attempted Fix 1.
             Change GenerateNewLink now called GenerateNewLinkText()
             Added Pad function found on Stackoverflow - but lost the link!
+******************************************************************************************************************************************
 Changes By Dave Gordon : 19th December 2015
 3.02.13     GenerateNewLinkText() is still not working. Reverting back to fixed text length for just now.
-                         
+******************************************************************************************************************************************                         
+
