@@ -11,19 +11,16 @@ TODO:
     4)      Send Page Url to API for blocking if necessary
     5)      Perhaps quicker to send the entire page to API to receive an edited version back? 1 - 4 has to be done before the page is rendered!
 
-    ******************************************************************************************************************************************  ******************************************************************************************************************************************
+******************************************************************************************************************************************
+******************************************************************************************************************************************
 Update History
 
 Changes By Dave Gordon : 19th December 2015
 3.02.11     Changed the Removed Image (r500) to new version incorporating our new agreed logo.
             Changed ProcessLink so that the link length (number of Characters) remain the same as the  original
-******************************************************************************************************************************************
-Changes By Dave Gordon : 19th December 2015
 3.02.12     GenerateNewLink() did not function correctly with long links. Attempted Fix 1.
             Change GenerateNewLink now called GenerateNewLinkText()
             Added Pad function found on Stackoverflow - but lost the link!
-******************************************************************************************************************************************
-Changes By Dave Gordon : 19th December 2015
 3.02.13     GenerateNewLinkText() is still not working. Reverting back to fixed text length for just now.
 ****************************************************************************************************************************************** 
 Changes By Dave Gordon : 20th December 2015
@@ -31,6 +28,7 @@ Changes By Dave Gordon : 20th December 2015
 3.02.15     Slight fix to the new function.
 3.02.16     Final fix - discovered the porposed SO answer is wrong.
 3.02.17     Resorted back to fixed link text replacement.
-3.02.18     First attempt a ProcessText - total failure.
+3.02.18     First attempt at ProcessText - total failure.
+3.02.19     Adding ImageLinkChecking on page load. To automatically remove previously reported files
 ******************************************************************************************************************************************                         
 
