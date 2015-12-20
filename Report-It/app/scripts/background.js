@@ -86,6 +86,7 @@ function onClickHandler(info) {
     }
    else if(info.selectionText) {      
        sText = info.selectionText;
+       console.log("Selected text = " + sText);
        SendReport(extId, username, pUrl, sUrl, lUrl, sText);
        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Text; " + lUrl }, function (response) {
