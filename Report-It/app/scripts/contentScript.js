@@ -1,12 +1,11 @@
 ﻿chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
-     
+
       console.log(sender.tab ?
                   "from a content script:" + sender.tab.url :
                   "from the extension");
 
       dhtmlx.message.position = "bottom";
-
 
       if (request.greeting === "Reported")       // Show the Reported Message to the EU
           dhtmlx.message({
@@ -22,7 +21,7 @@
       else if (request.greeting.startsWith("Image")) {
           ProcessImage(request.greeting);
       }
-      else  if (request.greeting.startsWith("Link")) {
+      else if (request.greeting.startsWith("Link")) {
           ProcessLink(request.greeting);
       }
       else if (request.greeting.startsWith("Text")) {
@@ -45,14 +44,13 @@ var ProcessImage = function (greeting) {
         if (imgs[idx].src === url[1].trim()) {
 
             var width = imgs[idx].width;
-            var height = imgs[idx].height;           
+            var height = imgs[idx].height;
             imgs[idx].src = imgUrl;  // Change the Image and set it's properties   
             imgs[idx].width = width; // Set our image to the same size as the previous image
             imgs[idx].height = height;
 
+            imgs[idx].alt = "Removed by 7ASecond.Net";
 
-          imgs[idx].alt = "Removed by 7ASecond.Net";
-            
             var r = imgs[idx].parentElement;
             if (imgs[idx].parentElement.localName === 'a') {
                 imgs[idx].parentElement.href = "http://7ASecond.Net";
@@ -62,26 +60,23 @@ var ProcessImage = function (greeting) {
                 imgs[idx].parentElement.removeAttribute('rel');
             }
             imgs[idx].title = "Removed by 7ASecond.Net";
-            
         }
     }
 };
 
-
-var ProcessLink = function(greeting) {
+var ProcessLink = function (greeting) {
     var url = greeting.split(';');
     var links = document.getElementsByTagName("a");
     for (var idx = 0; idx < links.length; idx++) {
-        if (links[idx].href === url[1].trim()) {            
-            
+        if (links[idx].href === url[1].trim()) {
+
             //var nLink = GenerateNewLinkText(links[idx]);
             //links[idx].text = nLink.text;
             links[idx].text = "[Removed By 7ASecond]";
-            links[idx].href = "http://7ASecond.Net";            
+            links[idx].href = "http://7ASecond.Net";
         }
     }
 };
-
 
 var GenerateNewLinkText = function (link) {
     var replacements = {
@@ -100,16 +95,93 @@ var GenerateNewLinkText = function (link) {
     return link;
 }
 
-var ProcessText = function(greeting) {
+var ProcessText = function (greeting) {
     // document.write(String.fromCharCode(178)); // ABC 
     var textParts = greeting.split(';');
     var text = textParts[1];
     var replacementChar = String.fromCharCode(178);
     var str = new Array(text.length + 1).join(replacementChar);
     document.body.innerText = document.body.innerText.replace(text, str);
-
 }
 
 var ProcessPage = function (greeting) {
 
 }
+
+chrome.runtime.onload.addListener(function () {
+    var imgUrl = chrome.extension.getURL("images/r500.png");
+    var imgs = document.getElementsByTagName("img");
+
+    for (var idx = 0; idx < imgs.length; idx++) {
+        if (ImageIsBlocked(imgs[idx])) {
+            var width = imgs[idx].width;
+            var height = imgs[idx].height;
+            imgs[idx].src = imgUrl; // Change the Image and set it's properties   
+            imgs[idx].width = width; // Set our image to the same size as the previous image
+            imgs[idx].height = height;
+
+            imgs[idx].alt = "Removed by 7ASecond.Net";
+
+            var r = imgs[idx].parentElement;
+            if (imgs[idx].parentElement.localName === 'a') {
+                imgs[idx].parentElement.href = "http://7ASecond.Net";
+                imgs[idx].baseURI = "http://7ASecond.Net";
+                imgs[idx].host = "http://7ASecond.Net";
+                imgs[idx].hostname = "http://7ASecond.Net";
+                imgs[idx].parentElement.removeAttribute('rel');
+            }
+            imgs[idx].title = "Removed by 7ASecond.Net";
+        }
+    }
+});
+
+
+// Create the XHR object.
+function CreateCorsRequest(method, url) {
+    var xhr = new XMLHttpRequest();
+
+
+    if ("withCredentials" in xhr) {
+        // XHR for Chrome/Firefox/Opera/Safari.
+        xhr.open(method, url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+    } else if (typeof XDomainRequest != "undefined") {
+        // XDomainRequest for IE.
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+    } else {
+        // CORS not supported.
+        xhr = null;
+    }
+
+    return xhr;
+}
+
+var ImageIsBlocked = function(link) {
+    // Send request direct to the API
+    sUrl = encodeURI(link);
+  return  CheckImage(sUrl);
+}
+
+
+var CheckImage = function(urlEncoded) {
+    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/Check/");
+    xhr.onload = function () {
+        var responseText = xhr.responseText;
+        console.log("Response Text: " + responseText);
+        // process the response.
+    };
+    xhr.onerror = function () {
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Error" }, function (response) {
+                console.log(response.farewell);
+                console.log(tabs[0].id);
+            });
+        });
+    };
+
+    // Send the Report
+  return  xhr.send("Image:" + JSON.stringify(urlEncoded));
+}
+
