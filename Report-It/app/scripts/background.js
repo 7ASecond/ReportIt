@@ -74,8 +74,7 @@ function onClickHandler(info) {
         });
 
     }
-    else if (info.linkUrl) {
-      
+    else if (info.linkUrl) {      
         lUrl = encodeURI(info.linkUrl);
         SendReport(extId, username, pUrl, sUrl, lUrl, sText);
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
