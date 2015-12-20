@@ -25,5 +25,12 @@ Changes By Dave Gordon : 19th December 2015
 ******************************************************************************************************************************************
 Changes By Dave Gordon : 19th December 2015
 3.02.13     GenerateNewLinkText() is still not working. Reverting back to fixed text length for just now.
+****************************************************************************************************************************************** 
+Changes By Dave Gordon : 20th December 2015
+3.02.14     New GenerateNewLink() function supplied here: http://stackoverflow.com/questions/34370763/javascript-change-link-text-to-new-text-padding-or-contracting-the-text-to-keep/34376705#34376705
+3.02.15     Slight fix to the new function.
+3.02.16     Final fix - discovered the porposed SO answer is wrong.
+3.02.17     Resorted back to fixed link text replacement.
+3.02.18     First attempt a ProcessText - total failure.
 ******************************************************************************************************************************************                         
 
