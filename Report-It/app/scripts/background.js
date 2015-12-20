@@ -4,6 +4,7 @@
     "onclick": onClickHandler
 });
 
+
 var ExtId = "";
 // Create the XHR object.
 function CreateCorsRequest(method, url) {
@@ -174,4 +175,3 @@ function getRandomToken() {
     // E.g. db18458e2782b2b77e36769c569e263a53885a9944dd0a861e5064eac16f1a
     return hex;
 }
-
