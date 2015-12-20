@@ -74,32 +74,40 @@ var ProcessLink = function(greeting) {
     for (var idx = 0; idx < links.length; idx++) {
         if (links[idx].href === url[1].trim()) {            
             
-            //var nLink = GenerateNewLinkText(links[idx].text);
-            //links[idx].text = nLink;
+            //var nLink = GenerateNewLinkText(links[idx]);
+            //links[idx].text = nLink.text;
             links[idx].text = "[Removed By 7ASecond]";
             links[idx].href = "http://7ASecond.Net";            
         }
     }
 };
 
-function pad(padding, str, padLeft) {
-    if (typeof str === 'undefined')
-        return padding;
-    if (padLeft) {
-        return (padding + str).slice(-pad.length);
-    } else {
-        return (str + padding).substring(0, padding.length);
-    }
-}
 
-var GenerateNewLinkText = function (txt) {
-    var replacementText = "[Removed]";
-    var padding = Array(txt.length - replacementText.length).join(" "); // make a string of 255 spaces        
-    return pad(padding, replacementText, false);
+var GenerateNewLinkText = function (link) {
+    var replacements = {
+        "Download": "404",
+        "Click to Download": "Removed",
+        "Preview": "404",
+        "https?://.+": ""
+    };
+    var allPatterns = new RegExp(Object.keys(replacements).join("|"));
+
+    var width = link.offsetWidth;
+    link.text = link.text.replace(allPatterns, function (s) {
+        return "[" + (replacements[s] || "Removed By 7ASecond") + "]";
+    });
+    link.style.paddingRight = (width - link.offsetWidth) + "px";
+    return link;
 }
 
 var ProcessText = function(greeting) {
-    
+    // document.write(String.fromCharCode(178)); // ABC 
+    var textParts = greeting.split(';');
+    var text = textParts[1];
+    var replacementChar = String.fromCharCode(178);
+    var str = new Array(text.length + 1).join(replacementChar);
+    document.body.innerText = document.body.innerText.replace(text, str);
+
 }
 
 var ProcessPage = function (greeting) {
