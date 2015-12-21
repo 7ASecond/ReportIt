@@ -26,7 +26,7 @@ function CreateCorsRequest(method, url) {
     }
 
     return xhr;
-}
+};
 
 // Decide what has been clicked on.
 // Get information to send to the Report-It POST Only API
@@ -138,17 +138,17 @@ function SendReport(extId, username, pUrl, sUrl, lUrl, sText) {
             console.log(tabs[0].id);
         });
     });
-}
+};
 
 // Get's the Unique Id of the extension for this machine.
 function GetExtensionId() {
     return localStorage.getItem("ReportItExtId");
-}
+};
 
 // If the User is registered AND logged in return their username so that they can maintain statistics.
 function GetUsername() {
     return "SYSTEM";
-}
+};
 
 // Check whether new version is installed
 chrome.runtime.onInstalled.addListener(function (details) {
@@ -174,4 +174,29 @@ function getRandomToken() {
     }
     // E.g. db18458e2782b2b77e36769c569e263a53885a9944dd0a861e5064eac16f1a
     return hex;
-}
+};
+
+
+// Catch a page before it is displayd and block it - we will redirect the user to our page!
+//chrome.webRequest.onBeforeRequest.addListener(
+//       function (details) {
+//           return { cancel: details.url.indexOf("://www.evil.com/") != -1 };
+//       },
+//       { urls: ["<all_urls>"] },
+//       ["blocking"]);
+
+
+var webRequestFilter = {
+    urls: ["<all_urls>"]
+};
+chrome.webRequest.onCompleted.addListener(completedCallBack, webRequestFilter);
+
+function completedCallBack(details) {
+    if (details.tabId > -1) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+            chrome.tabs.sendMessage(details.tabId, { greeting: "RemoveImages" }, function(response) {
+                console.log(response.farewell);
+            });
+        });
+    }
+};

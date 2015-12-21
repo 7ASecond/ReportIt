@@ -30,7 +30,37 @@
       else if (request.greeting.startsWith("Page")) {
           ProcessPage(request.greeting);
       }
+      else if (request.greeting.startsWith("RemoveImages")) {
+          RemoveImages(request.greeting);
+      }
   });
+
+var RemoveImages = function(greeting) {
+    var imgUrl = chrome.extension.getURL("images/r500.png");
+    var imgs = document.getElementsByTagName("img");
+
+    for (var imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
+        if (ImageIsBlocked(imgs[imgIndex].src)) {
+            var width = imgs[imgIndex].width;
+            var height = imgs[imgIndex].height;
+            imgs[imgIndex].src = imgUrl; // Change the Image and set it's properties   
+            imgs[imgIndex].width = width; // Set our image to the same size as the previous image
+            imgs[imgIndex].height = height;
+
+            imgs[imgIndex].alt = "Removed by 7ASecond.Net";
+
+            var r = imgs[imgIndex].parentElement;
+            if (imgs[imgIndex].parentElement.localName === 'a') {
+                imgs[imgIndex].parentElement.href = "http://7ASecond.Net";
+                imgs[imgIndex].baseURI = "http://7ASecond.Net";
+                imgs[imgIndex].host = "http://7ASecond.Net";
+                imgs[imgIndex].hostname = "http://7ASecond.Net";
+                imgs[imgIndex].parentElement.removeAttribute('rel');
+            }
+            imgs[imgIndex].title = "Removed by 7ASecond.Net";
+        }
+    }
+};
 
 var ProcessImage = function (greeting) {
 
@@ -42,6 +72,7 @@ var ProcessImage = function (greeting) {
     var imgs = document.getElementsByTagName("img");
     for (var idx = 0; idx < imgs.length; idx++) {
         if (imgs[idx].src === url[1].trim()) {
+            SaveImgeToLocalStorage(imgs[idx].src);
 
             var width = imgs[idx].width;
             var height = imgs[idx].height;
@@ -59,7 +90,7 @@ var ProcessImage = function (greeting) {
                 imgs[idx].hostname = "http://7ASecond.Net";
                 imgs[idx].parentElement.removeAttribute('rel');
             }
-            imgs[idx].title = "Removed by 7ASecond.Net";
+            imgs[idx].title = "Removed by 7ASecond.Net";            
         }
     }
 };
@@ -108,80 +139,71 @@ var ProcessPage = function (greeting) {
 
 }
 
-chrome.runtime.onload.addListener(function () {
-    var imgUrl = chrome.extension.getURL("images/r500.png");
-    var imgs = document.getElementsByTagName("img");
 
-    for (var idx = 0; idx < imgs.length; idx++) {
-        if (ImageIsBlocked(imgs[idx])) {
-            var width = imgs[idx].width;
-            var height = imgs[idx].height;
-            imgs[idx].src = imgUrl; // Change the Image and set it's properties   
-            imgs[idx].width = width; // Set our image to the same size as the previous image
-            imgs[idx].height = height;
+var SaveImgeToLocalStorage = function(imgSrc)
+{
+    var theValue = imgSrc;
+    localStorage["7ASecond;Image;" + encodeURI(imgSrc)] = imgSrc;
+}
 
-            imgs[idx].alt = "Removed by 7ASecond.Net";
-
-            var r = imgs[idx].parentElement;
-            if (imgs[idx].parentElement.localName === 'a') {
-                imgs[idx].parentElement.href = "http://7ASecond.Net";
-                imgs[idx].baseURI = "http://7ASecond.Net";
-                imgs[idx].host = "http://7ASecond.Net";
-                imgs[idx].hostname = "http://7ASecond.Net";
-                imgs[idx].parentElement.removeAttribute('rel');
-            }
-            imgs[idx].title = "Removed by 7ASecond.Net";
+var ImageIsBlocked = function(imgSrc) {
+    var res = false;
+    for (var i = 0; i < localStorage.length; i++) {
+        if (localStorage.key(i).startsWith("7ASecond;Image")) {
+            var r = localStorage.key(i);
+            var rParts = r.split(';');
+            if (rParts[2] === imgSrc) res = true;
         }
     }
-});
+    return res;
+};
+
+//// Create the XHR object.
+//function CreateCorsRequest(method, url) {
+//    var xhr = new XMLHttpRequest();
 
 
-// Create the XHR object.
-function CreateCorsRequest(method, url) {
-    var xhr = new XMLHttpRequest();
+//    if ("withCredentials" in xhr) {
+//        // XHR for Chrome/Firefox/Opera/Safari.
+//        xhr.open(method, url, true);
+//        xhr.setRequestHeader("Content-Type", "application/json");
+//    } else if (typeof XDomainRequest != "undefined") {
+//        // XDomainRequest for IE.
+//        xhr = new XDomainRequest();
+//        xhr.open(method, url);
+//        xhr.setRequestHeader("Content-Type", "application/json");
+//    } else {
+//        // CORS not supported.
+//        xhr = null;
+//    }
+
+//    return xhr;
+//}
+
+//var ImageIsBlocked = function(link) {
+//    // Send request direct to the API
+//    sUrl = encodeURI(link);
+//  return  CheckImage(sUrl);
+//}
 
 
-    if ("withCredentials" in xhr) {
-        // XHR for Chrome/Firefox/Opera/Safari.
-        xhr.open(method, url, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-    } else if (typeof XDomainRequest != "undefined") {
-        // XDomainRequest for IE.
-        xhr = new XDomainRequest();
-        xhr.open(method, url);
-        xhr.setRequestHeader("Content-Type", "application/json");
-    } else {
-        // CORS not supported.
-        xhr = null;
-    }
+//var CheckImage = function(urlEncoded) {
+//    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/Check/");
+//    xhr.onload = function () {
+//        var responseText = xhr.responseText;
+//        console.log("Response Text: " + responseText);
+//        // process the response.
+//    };
+//    xhr.onerror = function () {
+//        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Error" }, function (response) {
+//                console.log(response.farewell);
+//                console.log(tabs[0].id);
+//            });
+//        });
+//    };
 
-    return xhr;
-}
-
-var ImageIsBlocked = function(link) {
-    // Send request direct to the API
-    sUrl = encodeURI(link);
-  return  CheckImage(sUrl);
-}
-
-
-var CheckImage = function(urlEncoded) {
-    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/Check/");
-    xhr.onload = function () {
-        var responseText = xhr.responseText;
-        console.log("Response Text: " + responseText);
-        // process the response.
-    };
-    xhr.onerror = function () {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Error" }, function (response) {
-                console.log(response.farewell);
-                console.log(tabs[0].id);
-            });
-        });
-    };
-
-    // Send the Report
-  return  xhr.send("Image:" + JSON.stringify(urlEncoded));
-}
+//    // Send the Report
+//  return  xhr.send("Image:" + JSON.stringify(urlEncoded));
+//}
 
