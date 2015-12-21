@@ -1,6 +1,6 @@
 {
     "name": "Report-It!",
-    "version": "3.02.19",
+    "version": "3.02.41",
     "manifest_version": 2,
     "description": "Report Child Sexual Abuse Sites, Pages, Videos, Images and Text, Quickly and Easily.",
     "icons": {
@@ -29,7 +29,8 @@
         "contextMenus",
         "http://*/*",
         "https://*/*",
-        "storage"
+        "storage",
+        "webRequest"
     ],
 
     "web_accessible_resources": [

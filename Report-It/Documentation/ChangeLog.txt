@@ -30,5 +30,18 @@ Changes By Dave Gordon : 20th December 2015
 3.02.17     Resorted back to fixed link text replacement.
 3.02.18     First attempt at ProcessText - total failure.
 3.02.19     Adding ImageLinkChecking on page load. To automatically remove previously reported files
+3.02.20     OnCompleted Listener Added
+3.02.21     Moved listeners to Background page and added new message processing RemoveImage to content script.
+3.02.22     Added missing semi-colon to background page.
+3.02.23     No longer iterates through the images twice once on backend and once on front end scripts. Send image index instead of image link
+            Removed request from OnCompleted Listener and made listener a var return.
+3.02.24     Refactored the OnCompleted Listener making the callback a separate function.
+3.02.25     Added webRequest to the Manifest permission list. (Fixed unknown Type error issue since 3.02.20)
+3.02.26     Added webRequest filter.
+3.02.27     RemoveImage changed to RemoveImages.
+            Iteration of Images moved to contentScript.js
+            RemoveImage function changed to RemoveImages
+            Background page's completedCallBack function only sends RemoveImages message now.
+3.02.28 - 3.02.41   Various minor fixes to get the RemoveImages functions working
 ******************************************************************************************************************************************                         
 
