@@ -44,4 +44,6 @@ Changes By Dave Gordon : 20th December 2015
             Background page's completedCallBack function only sends RemoveImages message now.
 3.02.28 - 3.02.41   Various minor fixes to get the RemoveImages functions working
 ******************************************************************************************************************************************                         
+Changes By Dave Gordon : 21th December 2015
+3.02.42     Moving to HTML5 FileSystem for storing the previously removed items : http://www.html5rocks.com/en/tutorials/file/filesystem/
 

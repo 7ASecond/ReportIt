@@ -1,43 +1,48 @@
-﻿chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
+﻿
 
-      console.log(sender.tab ?
-                  "from a content script:" + sender.tab.url :
-                  "from the extension");
 
-      dhtmlx.message.position = "bottom";
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
-      if (request.greeting === "Reported")       // Show the Reported Message to the EU
-          dhtmlx.message({
-              text: "Successfully Reported!",
-              type: "info"
-          });
-      else if (request.greeting === "Error")     // Show the error message to the EU
-          dhtmlx.message({
-              text: "Failed to Report this",
-              type: "error"
-          });
-          // ReSharper disable once PossiblyUnassignedProperty
-      else if (request.greeting.startsWith("Image")) {
-          ProcessImage(request.greeting);
-      }
-      else if (request.greeting.startsWith("Link")) {
-          ProcessLink(request.greeting);
-      }
-      else if (request.greeting.startsWith("Text")) {
-          ProcessText(request.greeting);
-      }
-      else if (request.greeting.startsWith("Page")) {
-          ProcessPage(request.greeting);
-      }
-      else if (request.greeting.startsWith("RemoveImages")) {
-          RemoveImages(request.greeting);
-      }
-  });
 
-var RemoveImages = function(greeting) {
+    console.log(sender.tab ?
+                "from a content script:" + sender.tab.url :
+                "from the extension");
+
+    dhtmlx.message.position = "bottom";
+
+    if (request.greeting === "Reported")       // Show the Reported Message to the EU
+        dhtmlx.message({
+            text: "Successfully Reported!",
+            type: "info"
+        });
+    else if (request.greeting === "Error")     // Show the error message to the EU
+        dhtmlx.message({
+            text: "Failed to Report this",
+            type: "error"
+        });
+        // ReSharper disable once PossiblyUnassignedProperty
+    else if (request.greeting.startsWith("Image")) {
+        ProcessImage(request.greeting);
+    }
+    else if (request.greeting.startsWith("Link")) {
+        ProcessLink(request.greeting);
+    }
+    else if (request.greeting.startsWith("Text")) {
+        ProcessText(request.greeting);
+    }
+    else if (request.greeting.startsWith("Page")) {
+        ProcessPage(request.greeting);
+    }
+    else if (request.greeting.startsWith("RemoveImages")) {
+        RemoveImages(request.greeting);
+    }
+});
+
+var RemoveImages = function (greeting) {
     var imgUrl = chrome.extension.getURL("images/r500.png");
     var imgs = document.getElementsByTagName("img");
+
+    var blockedImages = GetBlockedImages(imgs);
 
     for (var imgIndex = 0; imgIndex < imgs.length; imgIndex++) {
         if (ImageIsBlocked(imgs[imgIndex].src)) {
@@ -62,6 +67,30 @@ var RemoveImages = function(greeting) {
     }
 };
 
+
+var GetBlockedImages = function (imgs) {
+    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/Check/");
+    xhr.onload = function () {
+        var responseText = xhr.responseText;
+        console.log("Response Text: " + responseText);
+        // process the response.
+    };
+
+    xhr.onerror = function () {
+        console.log(tabs[0].id);
+    };
+
+    var imgsSrc = new Array(imgs.length);
+    for (var idx = 0; idx < imgs.length; idx++) {
+        imgsSrc[imgsSrc.length] = imgs[idx].src;
+    }
+
+
+    var jString = JSON.stringify(imgsSrc);
+    // Send the Report
+    return xhr.send(jString);
+}
+
 var ProcessImage = function (greeting) {
 
     var url = greeting.split(';');
@@ -70,10 +99,10 @@ var ProcessImage = function (greeting) {
     var imgUrl = chrome.extension.getURL("images/r500.png");
 
     var imgs = document.getElementsByTagName("img");
+
     for (var idx = 0; idx < imgs.length; idx++) {
         if (imgs[idx].src === url[1].trim()) {
-            SaveImgeToLocalStorage(imgs[idx].src);
-
+            SaveImageToLocalStorage(imgs[idx].src);
             var width = imgs[idx].width;
             var height = imgs[idx].height;
             imgs[idx].src = imgUrl;  // Change the Image and set it's properties   
@@ -90,10 +119,13 @@ var ProcessImage = function (greeting) {
                 imgs[idx].hostname = "http://7ASecond.Net";
                 imgs[idx].parentElement.removeAttribute('rel');
             }
-            imgs[idx].title = "Removed by 7ASecond.Net";            
+            imgs[idx].title = "Removed by 7ASecond.Net";
         }
     }
 };
+
+
+
 
 var ProcessLink = function (greeting) {
     var url = greeting.split(';');
@@ -140,13 +172,13 @@ var ProcessPage = function (greeting) {
 }
 
 
-var SaveImgeToLocalStorage = function(imgSrc)
-{
+var SaveImageToLocalStorage = function (imgSrc) {
     var theValue = imgSrc;
-    localStorage["7ASecond;Image;" + encodeURI(imgSrc)] = imgSrc;
+    var eUrl = encodeURI(imgSrc);
+    localStorage["7ASecond;Image;" + eUrl] = imgSrc;
 }
 
-var ImageIsBlocked = function(imgSrc) {
+var ImageIsBlocked = function (imgSrc) {
     var res = false;
     for (var i = 0; i < localStorage.length; i++) {
         if (localStorage.key(i).startsWith("7ASecond;Image")) {
@@ -155,8 +187,18 @@ var ImageIsBlocked = function(imgSrc) {
             if (rParts[2] === imgSrc) res = true;
         }
     }
+
+    if (res !== true) // Not found in local storage - try the cloud?
+    {
+
+    }
+
+
     return res;
 };
+
+
+
 
 //// Create the XHR object.
 //function CreateCorsRequest(method, url) {
@@ -207,3 +249,60 @@ var ImageIsBlocked = function(imgSrc) {
 //  return  xhr.send("Image:" + JSON.stringify(urlEncoded));
 //}
 
+//function SendReport(imgs) {
+//    // Format:
+//    //      "extId,UserName,PageUrl,ReportType,SrcUrl,LinkUrl,TextContent"
+//    var report = extId + "," + username + "," + pUrl + "," + " " + "," + sUrl + "," + lUrl + "," + sText;  // The Report that will be sent to the POST only API
+
+//    // Setup our POST Headers
+//    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/ReportIt/");
+//    // For local debugging
+//    // var xhr = new CreateCorsRequest("POST", "http://localhost:3070/API/ReportIt/");
+
+//    xhr.onload = function () {
+//        var responseText = xhr.responseText;
+//        console.log("Response Text: " + responseText);
+//        // process the response.
+//    };
+
+//    xhr.onerror = function () {
+//        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Error" }, function (response) {
+//                console.log(response.farewell);
+//                console.log(tabs[0].id);
+//            });
+//        });
+//    };
+
+//    // Send the Report
+//    xhr.send(JSON.stringify(report));
+
+//    // Let the EU know that they have reported the content successfully
+//    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//        chrome.tabs.sendMessage(tabs[0].id, { greeting: "Reported" }, function (response) {
+//            console.log(response.farewell);
+//            console.log(tabs[0].id);
+//        });
+//    });
+//};
+
+function CreateCorsRequest(method, url) {
+    var xhr = new XMLHttpRequest();
+
+
+    if ("withCredentials" in xhr) {
+        // XHR for Chrome/Firefox/Opera/Safari.
+        xhr.open(method, url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+    } else if (typeof XDomainRequest != "undefined") {
+        // XDomainRequest for IE.
+        xhr = new XDomainRequest();
+        xhr.open(method, url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+    } else {
+        // CORS not supported.
+        xhr = null;
+    }
+
+    return xhr;
+};

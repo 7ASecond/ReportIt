@@ -1,8 +1,12 @@
-﻿chrome.contextMenus.create({
+﻿
+
+chrome.contextMenus.create({
     "title": "ReportIt!",
     "contexts": ["all"],
     "onclick": onClickHandler
 });
+
+
 
 
 var ExtId = "";
@@ -109,7 +113,7 @@ function SendReport(extId, username, pUrl, sUrl, lUrl, sText) {
     var report = extId + "," + username + "," + pUrl + "," + " " + "," + sUrl + "," + lUrl + "," + sText;  // The Report that will be sent to the POST only API
 
     // Setup our POST Headers
-    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/ReportIt/");
+    var xhr = new CreateCorsRequest("POST", "http://repoirtitapi.cloudapp.net/api/ReportIt/");
     // For local debugging
     // var xhr = new CreateCorsRequest("POST", "http://localhost:3070/API/ReportIt/");
 
@@ -162,7 +166,11 @@ chrome.runtime.onInstalled.addListener(function (details) {
         ExtId = GetExtensionId();
         console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
     }
+
+    
 });
+
+
 
 function getRandomToken() {
     // E.g. 8 * 32 = 256 bits token
@@ -186,17 +194,17 @@ function getRandomToken() {
 //       ["blocking"]);
 
 
-var webRequestFilter = {
-    urls: ["<all_urls>"]
-};
-chrome.webRequest.onCompleted.addListener(completedCallBack, webRequestFilter);
+//var webRequestFilter = {
+//    urls: ["<all_urls>"]
+//};
+//chrome.webRequest.onCompleted.addListener(completedCallBack, webRequestFilter);
 
-function completedCallBack(details) {
-    if (details.tabId > -1) {
-        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-            chrome.tabs.sendMessage(details.tabId, { greeting: "RemoveImages" }, function(response) {
-                console.log(response.farewell);
-            });
-        });
-    }
-};
+//function completedCallBack(details) {
+//    if (details.tabId > -1) {
+//        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+//            chrome.tabs.sendMessage(details.tabId, { greeting: "RemoveImages" }, function(response) {
+//                console.log(response.farewell);
+//            });
+//        });
+//    }
+//};
