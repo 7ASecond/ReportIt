@@ -44,6 +44,21 @@ Changes By Dave Gordon : 20th December 2015
             Background page's completedCallBack function only sends RemoveImages message now.
 3.02.28 - 3.02.41   Various minor fixes to get the RemoveImages functions working
 ******************************************************************************************************************************************                         
-Changes By Dave Gordon : 21th December 2015
+Changes By Dave Gordon : 21st December 2015
 3.02.42     Moving to HTML5 FileSystem for storing the previously removed items : http://www.html5rocks.com/en/tutorials/file/filesystem/
-
+******************************************************************************************************************************************                         
+Changes By Dave Gordon : 22nd - 24th December 2015
+3.02.43 - 3.02.59   Many small changes to try and get reported content to persist when in InCognito Mode - none successful
+                    Updated ReportIt! to now point to and use the Azure hosted Report-It API VM.
+******************************************************************************************************************************************                         
+Changes By Dave Gordon : 29th December 2015
+3.02.60     Updated ReportIt! to now point to and use the even newer Azure hosted Report-It API VM and Damocles VM
+******************************************************************************************************************************************                         
+Changes By Dave Gordon : 30th December 2015
+3.02.61 - 3.02.62   Attempted Image download for sending to API but too many cross origin exceptions. Moving the process to the API and background workers instead.
+******************************************************************************************************************************************                         
+Changes By Dave Gordon : 31st December 2015 - Happy New Year!
+3.02.63     Implementing RemoveProblemJs which will prevent onbeforeunload, unload, oncontextmenu and other nefarious script blocking systems from interfering with Report-It! Browser Add-On.
+******************************************************************************************************************************************                         
+Changes By Dave Gordon : 1st January 2016
+3.02.64 - 3.02.98   Failed Attempts at 3.02.63 problems.

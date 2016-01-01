@@ -4,11 +4,7 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
-    console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
-
-    dhtmlx.message.position = "bottom";
+   dhtmlx.message.position = "bottom";
 
     if (request.greeting === "Reported")       // Show the Reported Message to the EU
         dhtmlx.message({
@@ -34,7 +30,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         ProcessPage(request.greeting);
     }
     else if (request.greeting.startsWith("RemoveImages")) {
-        RemoveImages(request.greeting);
+        RemoveImages(request.greeting);       
+    }
+    else if (request.greeting === "OnLoad") {
+        injectScriptOnLoad();
     }
 });
 
@@ -103,6 +102,7 @@ var ProcessImage = function (greeting) {
     for (var idx = 0; idx < imgs.length; idx++) {
         if (imgs[idx].src === url[1].trim()) {
             SaveImageToLocalStorage(imgs[idx].src);
+          
             var width = imgs[idx].width;
             var height = imgs[idx].height;
             imgs[idx].src = imgUrl;  // Change the Image and set it's properties   
@@ -197,95 +197,6 @@ var ImageIsBlocked = function (imgSrc) {
     return res;
 };
 
-
-
-
-//// Create the XHR object.
-//function CreateCorsRequest(method, url) {
-//    var xhr = new XMLHttpRequest();
-
-
-//    if ("withCredentials" in xhr) {
-//        // XHR for Chrome/Firefox/Opera/Safari.
-//        xhr.open(method, url, true);
-//        xhr.setRequestHeader("Content-Type", "application/json");
-//    } else if (typeof XDomainRequest != "undefined") {
-//        // XDomainRequest for IE.
-//        xhr = new XDomainRequest();
-//        xhr.open(method, url);
-//        xhr.setRequestHeader("Content-Type", "application/json");
-//    } else {
-//        // CORS not supported.
-//        xhr = null;
-//    }
-
-//    return xhr;
-//}
-
-//var ImageIsBlocked = function(link) {
-//    // Send request direct to the API
-//    sUrl = encodeURI(link);
-//  return  CheckImage(sUrl);
-//}
-
-
-//var CheckImage = function(urlEncoded) {
-//    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/Check/");
-//    xhr.onload = function () {
-//        var responseText = xhr.responseText;
-//        console.log("Response Text: " + responseText);
-//        // process the response.
-//    };
-//    xhr.onerror = function () {
-//        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-//            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Error" }, function (response) {
-//                console.log(response.farewell);
-//                console.log(tabs[0].id);
-//            });
-//        });
-//    };
-
-//    // Send the Report
-//  return  xhr.send("Image:" + JSON.stringify(urlEncoded));
-//}
-
-//function SendReport(imgs) {
-//    // Format:
-//    //      "extId,UserName,PageUrl,ReportType,SrcUrl,LinkUrl,TextContent"
-//    var report = extId + "," + username + "," + pUrl + "," + " " + "," + sUrl + "," + lUrl + "," + sText;  // The Report that will be sent to the POST only API
-
-//    // Setup our POST Headers
-//    var xhr = new CreateCorsRequest("POST", "http://reportitapi2.azurewebsites.net/API/ReportIt/");
-//    // For local debugging
-//    // var xhr = new CreateCorsRequest("POST", "http://localhost:3070/API/ReportIt/");
-
-//    xhr.onload = function () {
-//        var responseText = xhr.responseText;
-//        console.log("Response Text: " + responseText);
-//        // process the response.
-//    };
-
-//    xhr.onerror = function () {
-//        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-//            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Error" }, function (response) {
-//                console.log(response.farewell);
-//                console.log(tabs[0].id);
-//            });
-//        });
-//    };
-
-//    // Send the Report
-//    xhr.send(JSON.stringify(report));
-
-//    // Let the EU know that they have reported the content successfully
-//    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-//        chrome.tabs.sendMessage(tabs[0].id, { greeting: "Reported" }, function (response) {
-//            console.log(response.farewell);
-//            console.log(tabs[0].id);
-//        });
-//    });
-//};
-
 function CreateCorsRequest(method, url) {
     var xhr = new XMLHttpRequest();
 
@@ -306,3 +217,56 @@ function CreateCorsRequest(method, url) {
 
     return xhr;
 };
+
+function injectScriptOnLoad() {
+
+
+    //if (document.body !== null) {       // Sometimes runs before the body has been created.
+    //    //console.log("Looking for onbeforeunload");
+    //    if (document.body.hasAttribute("onbeforeunload")) {
+    //        document.body.removeAttribute("onbeforeunload");
+    //        document.removeEventListener("beforeunload",false);
+    //        console.log("onbeforeunload found and removed");
+    //    }
+
+    //    //console.log("Looking for onmouseover");
+    //    if (document.body.hasAttribute("onmouseover")) {
+    //        document.body.removeAttribute("onmouseover");
+    //        document.removeEventListener("mouseover", false);
+    //        console.log("onmouseover found and removed");
+    //    }
+
+    //    //console.log("Looking for oncontextmenu");
+    //    if (document.body.hasAttribute("oncontextmenu")) {
+    //        document.body.removeAttribute("oncontextmenu");
+    //        document.removeEventListener("contextmenu", false);
+    //        console.log("oncontextmenu found and removed");
+    //    }
+
+    //    //console.log("Looking for onunload");
+    //    if (document.body.hasAttribute("onunload")) {
+    //        document.body.removeAttribute("onunload");
+    //        document.removeEventListener("unload", false);
+    //        console.log("onunload found and removed");
+    //    }
+
+    //    //console.log("Looking for onload");
+    //    //if (window.hasAttribute("onload")) {
+    //    //    window.removeAttribute("onload");
+    //    //    window.removeEventListener("load", false);
+    //    //    console.log("onload found and removed (Window)");
+    //    //}
+
+    //    if (document.head.hasAttribute("onload")) {
+    //        document.head.removeAttribute("onload");
+    //        document.head.removeEventListener("load", false);
+    //        console.log("onload found and removed (Document:Head)");
+    //    }
+
+    //    if (document.body.hasAttribute("onload")) {
+    //        document.body.removeAttribute("onload");
+    //        document.body.removeEventListener("load", false);
+    //        console.log("onload found and removed (Document:Body)");
+    //    }
+    //}
+}

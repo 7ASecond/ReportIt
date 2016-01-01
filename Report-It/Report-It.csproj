@@ -46,7 +46,6 @@
     <Content Include="app\popup.js" />
     <Content Include="app\scripts\background.js" />
     <Content Include="app\scripts\contentScript.js" />
-    <Content Include="app\scripts\fs.js" />
     <Content Include="app\scripts\message.js" />
     <Content Include="app\scripts\themes\message_skyblue.css" />
     <Content Include="Documentation\ChangeLog.txt" />

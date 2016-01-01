@@ -1,6 +1,6 @@
 {
     "name": "Report-It!",
-    "version": "3.02.59",
+    "version": "3.02.98",
     "manifest_version": 2,
     "description": "Report Child Sexual Abuse Sites, Pages, Videos, Images and Text, Quickly and Easily.",
     "icons": {
@@ -19,8 +19,9 @@
         {
             "matches": [ "http://*/*", "https://*/*" ],
             "css": [ "scripts/themes/message_skyblue.css" ],
-            "js": [ "scripts/message.js", "scripts/ContentScript.js" ],
-            "run_at": "document_start"   
+            "js": ["scripts/message.js", "scripts/ContentScript.js"],
+            "allFrames": "true",
+            "run_at": "document_start"
         }
     ],
 

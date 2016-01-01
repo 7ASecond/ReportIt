@@ -62,14 +62,14 @@ function onClickHandler(info) {
     var extId = GetExtensionId();           // This add on's Unique Id for this computer
     var username = GetUsername();           // The Username of the EU if registered & Logged on
     var pUrl = encodeURI(info.pageUrl);     // The Page containing the reported content
-                         
+
     var sUrl = "";                          // The source Url of the content if applicable
     var lUrl = "";                          // The link url of the content if applicable
     var sText = "";                         // The Selected text content if applicable
 
     // Are we reporting an Image?
     if (info.mediaType === "image") {
-       
+
         sUrl = encodeURI(info.srcUrl);
         SendReport(extId, username, pUrl, sUrl, lUrl, sText);
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -79,7 +79,7 @@ function onClickHandler(info) {
         });
 
     }
-    else if (info.linkUrl) {      
+    else if (info.linkUrl) {
         lUrl = encodeURI(info.linkUrl);
         SendReport(extId, username, pUrl, sUrl, lUrl, sText);
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -88,22 +88,22 @@ function onClickHandler(info) {
             });
         });
     }
-   else if(info.selectionText) {      
-       sText = info.selectionText;
-       console.log("Selected text = " + sText);
-       SendReport(extId, username, pUrl, sUrl, lUrl, sText);
-       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-           chrome.tabs.sendMessage(tabs[0].id, { greeting: "Text; " + lUrl }, function (response) {
-               console.log(response.farewell);
-           });
-       });
-   } else {
+    else if (info.selectionText) {
+        sText = info.selectionText;
+        console.log("Selected text = " + sText);
         SendReport(extId, username, pUrl, sUrl, lUrl, sText);
-       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-           chrome.tabs.sendMessage(tabs[0].id, { greeting: "Page; " + lUrl }, function (response) {
-               console.log(response.farewell);
-           });
-       });
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Text; " + lUrl }, function (response) {
+                console.log(response.farewell);
+            });
+        });
+    } else {
+        SendReport(extId, username, pUrl, sUrl, lUrl, sText);
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.tabs.sendMessage(tabs[0].id, { greeting: "Page; " + lUrl }, function (response) {
+                console.log(response.farewell);
+            });
+        });
     }
 };
 
@@ -113,7 +113,7 @@ function SendReport(extId, username, pUrl, sUrl, lUrl, sText) {
     var report = extId + "," + username + "," + pUrl + "," + " " + "," + sUrl + "," + lUrl + "," + sText;  // The Report that will be sent to the POST only API
 
     // Setup our POST Headers
-    var xhr = new CreateCorsRequest("POST", "http://repoirtitapi.cloudapp.net/api/ReportIt/");
+    var xhr = new CreateCorsRequest("POST", "http://reportitserver.cloudapp.net/api/reportit/");
     // For local debugging
     // var xhr = new CreateCorsRequest("POST", "http://localhost:3070/API/ReportIt/");
 
@@ -167,7 +167,7 @@ chrome.runtime.onInstalled.addListener(function (details) {
         console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
     }
 
-    
+
 });
 
 
@@ -184,27 +184,18 @@ function getRandomToken() {
     return hex;
 };
 
-
-// Catch a page before it is displayd and block it - we will redirect the user to our page!
-//chrome.webRequest.onBeforeRequest.addListener(
-//       function (details) {
-//           return { cancel: details.url.indexOf("://www.evil.com/") != -1 };
-//       },
-//       { urls: ["<all_urls>"] },
-//       ["blocking"]);
-
-
 //var webRequestFilter = {
 //    urls: ["<all_urls>"]
 //};
-//chrome.webRequest.onCompleted.addListener(completedCallBack, webRequestFilter);
 
+//chrome.webRequest.onCompleted.addListener(completedCallBack, webRequestFilter);
 //function completedCallBack(details) {
 //    if (details.tabId > -1) {
-//        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
-//            chrome.tabs.sendMessage(details.tabId, { greeting: "RemoveImages" }, function(response) {
-//                console.log(response.farewell);
+//        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//            chrome.tabs.sendMessage(details.tabId, { greeting: "OnLoad" }, function (response) {                
 //            });
 //        });
 //    }
-//};
+//   // chrome.webRequest.onCompleted.removeListener(completedCallBack, webRequestFilter);
+
+//}
