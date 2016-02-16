@@ -107,13 +107,13 @@ function onClickHandler(info) {
     }
 };
 
-function SendReport(extId, username, pUrl, sUrl, lUrl, sText) {
+function SendReport(extId, pUrl, sUrl, lUrl, sText) {
     // Format:
     //      "extId,UserName,PageUrl,ReportType,SrcUrl,LinkUrl,TextContent"
-    var report = extId + "," + username + "," + pUrl + "," + " " + "," + sUrl + "," + lUrl + "," + sText;  // The Report that will be sent to the POST only API
+    var report = extId + "," + pUrl + "," + sUrl + "," + lUrl + "," + sText;  // The Report that will be sent to the POST only API
 
     // Setup our POST Headers
-    var xhr = new CreateCorsRequest("POST", "http://reportitserver.cloudapp.net/api/reportit/");
+    var xhr = new CreateCorsRequest("POST", "http://reportitapi.azurewebsites.net/api/reportit/");
     // For local debugging
     // var xhr = new CreateCorsRequest("POST", "http://localhost:3070/API/ReportIt/");
 
@@ -166,8 +166,6 @@ chrome.runtime.onInstalled.addListener(function (details) {
         ExtId = GetExtensionId();
         console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
     }
-
-
 });
 
 
